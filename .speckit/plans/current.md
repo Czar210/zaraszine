@@ -12,7 +12,7 @@ Sair do zero pra um blog Astro navegável com a identidade visual fechada (token
 
 ## Entregas
 - [ ] Esqueleto Astro 5 + MDX com content collection de posts (título, tags, data, idioma, capa)
-- [ ] Arquivo de tokens de design (paleta confirmada visualmente + tipografia escolhida como fonte da verdade)
+- [ ] Arquivo de tokens de design (cargos e vozes da direção «zine terroso» — ver decisions.md 06/07)
 - [ ] Home em card/block layout interativo
 - [ ] Template de post em Z-shape/assimétrico (texto + imagens intercaladas)
 - [ ] Gerador procedural de capas em build (foto opcional + título + seed; override manual por frontmatter)
@@ -29,5 +29,4 @@ Sair do zero pra um blog Astro navegável com a identidade visual fechada (token
 
 ## Bloqueadores conhecidos
 
-- Hexes da paleta são proposta inicial (ver CLAUDE.md §4) — confirmar visualmente antes de fechar os tokens.
-- Tipografia ainda não escolhida — decisão de design a fechar no início do M1.
+Nenhum. (Paleta, tipografia e nome fechados em 06/07 — ver tracking/decisions.md; contrato visual no direction board rev.3.)

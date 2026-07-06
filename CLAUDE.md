@@ -1,12 +1,12 @@
 > metodo: 1.1 | nivel: N2 | vault: C:\Users\cesar\Documents\GitHub\vault (caminho canônico em ~/.claude/metodo-config.md)
 
-# CLAUDE.md — blog-cesar
+# CLAUDE.md — ZarasZine
 
 > Leia antes de qualquer ação. O modelo completo do método está em `COMO-FUNCIONA.md` (nesta pasta) e detalhado em `vault/geral/metodo/`. **Teto deste arquivo: ~200 linhas** — o que é transversal migra pro vault e vira link.
 
 ## 1. O que é
 
-Blog pessoal do César — um diário aberto, editorial e extremamente bonito, para anotar aprendizados e opiniões em português e inglês. O blog é só o blog: sem admin, sem auth, sem banco; publicar um post = commitar um arquivo MDX e dar push (a Vercel builda). É ferramenta pessoal séria com identidade visual própria (N2): não mexe com dinheiro nem PII, mas vai viver anos.
+**ZarasZine** (wordmark `zaraszine.`) — blog pessoal do César/Zaras: um diário aberto, editorial e extremamente bonito, para anotar aprendizados e opiniões em português e inglês. O blog é só o blog: sem admin, sem auth, sem banco; publicar um post = commitar um arquivo MDX e dar push (a Vercel builda). É ferramenta pessoal séria com identidade visual própria (N2): não mexe com dinheiro nem PII, mas vai viver anos.
 
 ## 2. Stack canônica (source of truth)
 
@@ -35,7 +35,7 @@ npm run preview   # servir o build localmente
 
 - **Publicação só via git.** Nunca adicionar admin, auth, CMS ou escrita em runtime — isso mudaria o nível do projeto e exige re-declaração.
 - **Zero dados de terceiros.** Sem formulários, sem comentários com banco, sem analytics que colete PII.
-- **Paleta e tipografia vivem nos tokens.** Cor ou fonte hardcoded fora do arquivo de tokens é bug. Paleta canônica (hexes iniciais — confirmar visualmente no M1): tigers-eye `#E08D3C` · xanthous `#FFB627` · sunset `#FAD6A5` · dark-moss-green `#4A5D23` · bistre `#3D2B1F`.
+- **Paleta e tipografia vivem nos tokens.** Cor ou fonte hardcoded fora do arquivo de tokens é bug. Base canônica: tigers-eye `#E08D3C` · xanthous `#FFB627` · sunset `#FAD6A5` · dark-moss-green `#4A5D23` · bistre `#3D2B1F`. Direção «zine terroso» aprovada 06/07/2026 define os cargos (fundo `#241811`, tinta `#D9A24B`, texto `#E9C289`, fogo = xanthous só em ação, carimbos PT/EN, papel = sunset) e as 3 vozes: Young Serif (display) + Literata (corpo) + Courier Prime (utilitária). O arquivo de tokens do M1 materializa isso; detalhes em `.speckit/tracking/decisions.md`.
 - **Conteúdo é do César.** A IA nunca cria, edita ou apaga post sem pedido explícito.
 - **URL de post publicado é imutável.** Mudança de permalink/slug publicado = A2.
 
