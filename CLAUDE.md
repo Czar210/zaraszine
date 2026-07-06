@@ -47,7 +47,7 @@ Padrão do método (`vault/geral/metodo/autonomia.md`), com ajustes:
 
 ## 6. Ponteiros pro vault
 
-- Contexto de negócio: `vault/projetos/blog-cesar/`
+- Contexto de negócio: `vault/projetos/zaraszine/`
 - APIs externas usadas: nenhuma (estático puro).
 - Padrões aplicados: — (preencher quando o primeiro padrão do vault for usado).
 

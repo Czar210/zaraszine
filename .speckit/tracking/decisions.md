@@ -16,3 +16,4 @@ atualizado: 2026-07-06
 | 2026-07-06 | Direção visual «zine terroso» aprovada | Fundo bistre #241811, tinta ouro-velho #D9A24B, fogo xanthous só em ação; Young Serif (display) + Literata (corpo) + Courier Prime (utilitária); sujeira punk só nas capas | direction board (artifact f331a4b8, rev.3) |
 | 2026-07-06 | Carimbos de idioma na linha de meta, nunca na capa | Mais visível ao lado do tema; capa fica limpa; tigers-eye=PT, moss claro=EN, carimbo duplo PT✳EN pra post com gêmeo | board rev.2 |
 | 2026-07-06 | Nome do blog: **ZarasZine** (`zaraszine.`) | Apelido Zaras + formato zine, aliterado, igual nos dois mundos; padrão «pessoa+ofício» à la Akita on Rails | board rev.3 |
+| 2026-07-06 | Repo renomeado `zaraszine` e publicado público no GitHub | Coerência com o nome antes do primeiro código; README é a porta de entrada | Aval do Diretor |
