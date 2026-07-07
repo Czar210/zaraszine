@@ -16,12 +16,16 @@ const { lang, outroHref, outroLabel } = Astro.props;
 <header class="mast wrap">
   <a class="wordmark" href={homeOf(lang)}>zaras<b>zine.</b></a>
   <nav class="switch" aria-label={lang === 'pt' ? 'idioma' : 'language'}>
-    <span class={`opt ${lang === 'pt' ? 'on pt' : ''}`}>PT</span>
-    <a
-      class={`opt link ${lang === 'en' ? 'on en' : ''}`}
-      href={outroHref}
-      title={outroLabel}
-    >{lang === 'pt' ? 'EN' : 'PT'}</a>
+    {lang === 'pt' ? (
+      <span class="opt on pt" aria-current="true">PT</span>
+    ) : (
+      <a class="opt link" href={outroHref} title={outroLabel}>PT</a>
+    )}
+    {lang === 'en' ? (
+      <span class="opt on en" aria-current="true">EN</span>
+    ) : (
+      <a class="opt link" href={outroHref} title={outroLabel}>EN</a>
+    )}
   </nav>
 </header>
 
