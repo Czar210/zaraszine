@@ -1,0 +1,353 @@
+---
+/* ZineFlip — o folheador da zine. Progressive enhancement:
+   sem JS (ou reduced-motion) mostra as páginas empilhadas (o fallback do M2);
+   com JS vira um leitor de spread — 2 páginas por vez em desktop, virando a
+   folha sobre a lombada; 1 por vez em mobile. Teclado ← →, swipe e botões. */
+import { UI, type Lang } from '../lib/i18n';
+
+interface Props {
+  paginas: string[];
+  titulo: string;
+  lang: Lang;
+}
+const { paginas, titulo, lang } = Astro.props;
+const t = UI[lang];
+---
+
+<div class="flip" data-paginas={JSON.stringify(paginas)} data-titulo={titulo}>
+  <!-- leitor (montado por JS) -->
+  <div class="reader" hidden>
+    <div class="palco">
+      <div class="livro">
+        <div class="lado esq"><img alt="" /></div>
+        <div class="lado dir"><img alt="" /></div>
+        <div class="folha" aria-hidden="true">
+          <div class="face frente"><img alt="" /></div>
+          <div class="face verso"><img alt="" /></div>
+        </div>
+        <div class="lombada" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="controles">
+      <button class="nav prev" type="button" aria-label={lang === 'pt' ? 'página anterior' : 'previous page'}>←</button>
+      <span class="pos" aria-live="polite"></span>
+      <button class="nav next" type="button" aria-label={lang === 'pt' ? 'próxima página' : 'next page'}>→</button>
+    </div>
+    <p class="dica">{lang === 'pt' ? 'use ← → ou arraste' : 'use ← → or swipe'}</p>
+  </div>
+
+  <!-- fallback: páginas empilhadas (sem JS / reduced-motion) -->
+  <div class="empilhado">
+    {paginas.map((src, i) => (
+      <figure class="pag">
+        <img src={src} alt={`${titulo} — ${t.paginas} ${i + 1}`} loading={i < 2 ? 'eager' : 'lazy'} decoding="async" />
+        <figcaption>{String(i + 1).padStart(2, '0')}</figcaption>
+      </figure>
+    ))}
+  </div>
+</div>
+
+<style>
+  .flip { margin-top: 32px; }
+
+  /* ---------- leitor ---------- */
+  .palco {
+    perspective: 2200px;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+  }
+  .livro {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: min(940px, 100%);
+    aspect-ratio: 8 / 5.5;
+    transform-style: preserve-3d;
+  }
+  .lado { position: relative; overflow: hidden; background: var(--cafe); border: var(--borda); }
+  .lado.esq { border-right: none; border-radius: var(--raio) 0 0 var(--raio); }
+  .lado.dir { border-left: none; border-radius: 0 var(--raio) var(--raio) 0; }
+  .lado img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* sombra da lombada */
+  .lombada {
+    position: absolute;
+    top: 0; bottom: 0; left: 50%;
+    width: 44px;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 5;
+    background: linear-gradient(90deg, transparent,
+      color-mix(in srgb, var(--cafe) 55%, transparent) 46%,
+      color-mix(in srgb, var(--cafe) 55%, transparent) 54%, transparent);
+  }
+
+  /* a folha que vira */
+  .folha {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 50%;
+    transform-style: preserve-3d;
+    transition: transform 0.62s var(--ease);
+    z-index: 6;
+  }
+  .folha[hidden] { display: none; }
+  .folha .face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    backface-visibility: hidden;
+    background: var(--cafe);
+    border: var(--borda);
+  }
+  .folha .face img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .folha .frente { transform: rotateY(0deg); }
+  .folha .verso { transform: rotateY(180deg); }
+  /* virada pra frente: folha na metade direita, gira sobre a lombada esquerda */
+  .folha.dir { right: 0; transform-origin: left center; }
+  .folha.dir .frente { border-radius: 0 var(--raio) var(--raio) 0; border-left: none; }
+  .folha.dir .verso { border-radius: var(--raio) 0 0 var(--raio); border-right: none; }
+  .folha.dir.turn { transform: rotateY(-180deg); }
+  /* virada pra trás: folha na metade esquerda, gira sobre a lombada direita */
+  .folha.esq { left: 0; transform-origin: right center; }
+  .folha.esq .frente { border-radius: var(--raio) 0 0 var(--raio); border-right: none; }
+  .folha.esq .verso { border-radius: 0 var(--raio) var(--raio) 0; border-left: none; }
+  .folha.esq.turn { transform: rotateY(180deg); }
+
+  .controles {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 22px;
+  }
+  .nav {
+    font-family: var(--f-mono);
+    font-size: 1.1rem;
+    color: var(--tinta);
+    background: var(--superficie);
+    border: var(--borda);
+    border-radius: 999px;
+    width: 46px; height: 46px;
+    cursor: pointer;
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
+  }
+  .nav:hover:not(:disabled) { color: var(--fundo); background: var(--fogo); border-color: var(--fogo); }
+  .nav:disabled { opacity: 0.35; cursor: default; }
+  .pos {
+    font-family: var(--f-mono);
+    font-size: var(--t-sm);
+    color: var(--meta);
+    letter-spacing: 0.1em;
+    font-variant-numeric: tabular-nums;
+    min-width: 8ch;
+    text-align: center;
+  }
+  .dica {
+    text-align: center;
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--meta);
+    margin: 12px 0 0;
+  }
+
+  /* ---------- fallback empilhado ---------- */
+  .empilhado {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  /* o atributo hidden precisa vencer o display:grid acima */
+  .empilhado[hidden] { display: none; }
+  .reader[hidden] { display: none; }
+  .pag { margin: 0; position: relative; }
+  .pag img { width: 100%; border: var(--borda); border-radius: var(--raio); display: block; }
+  .pag figcaption {
+    position: absolute; bottom: 8px; right: 10px;
+    font-family: var(--f-mono); font-size: var(--t-xs);
+    color: var(--papel); background: var(--cafe);
+    padding: 1px 7px; border-radius: 3px; font-variant-numeric: tabular-nums;
+  }
+
+  /* mobile: 1 página por vez no leitor */
+  @media (max-width: 760px) {
+    .livro { grid-template-columns: 1fr; aspect-ratio: 4 / 5.5; }
+    .lado.esq { display: none; }
+    .lado.dir { border-left: var(--borda); border-radius: var(--raio); }
+    .lombada { display: none; }
+    .folha { width: 100%; }
+    .empilhado { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .folha { transition: none; }
+  }
+</style>
+
+<script>
+  type Modo = 'spread' | 'single';
+
+  class Flip {
+    root: HTMLElement;
+    pgs: string[];
+    reader: HTMLElement;
+    empilhado: HTMLElement;
+    livro: HTMLElement;
+    imgEsq: HTMLImageElement;
+    imgDir: HTMLImageElement;
+    folha: HTMLElement;
+    faceFrente: HTMLImageElement;
+    faceVerso: HTMLImageElement;
+    pos: HTMLElement;
+    btnPrev: HTMLButtonElement;
+    btnNext: HTMLButtonElement;
+    i = 0; // índice da página à esquerda (spread) ou da página atual (single)
+    modo: Modo = 'spread';
+    animando = false;
+
+    constructor(root: HTMLElement) {
+      this.root = root;
+      this.pgs = JSON.parse(root.dataset.paginas || '[]');
+      this.reader = root.querySelector('.reader')!;
+      this.empilhado = root.querySelector('.empilhado')!;
+      this.livro = root.querySelector('.livro')!;
+      this.imgEsq = root.querySelector('.lado.esq img')!;
+      this.imgDir = root.querySelector('.lado.dir img')!;
+      this.folha = root.querySelector('.folha')!;
+      this.faceFrente = root.querySelector('.folha .frente img')!;
+      this.faceVerso = root.querySelector('.folha .verso img')!;
+      this.pos = root.querySelector('.pos')!;
+      this.btnPrev = root.querySelector('.prev')!;
+      this.btnNext = root.querySelector('.next')!;
+
+      if (this.pgs.length === 0) return;
+
+      // liga o leitor, esconde o fallback
+      this.empilhado.hidden = true;
+      this.reader.hidden = false;
+      this.folha.hidden = true;
+
+      this.setModo();
+      this.render();
+      this.bind();
+    }
+
+    setModo() {
+      this.modo = window.matchMedia('(max-width: 760px)').matches ? 'single' : 'spread';
+    }
+
+    src(i: number): string {
+      return this.pgs[i] ?? '';
+    }
+
+    render() {
+      if (this.modo === 'spread') {
+        this.imgEsq.src = this.src(this.i);
+        const d = this.src(this.i + 1);
+        this.imgDir.src = d;
+        (this.imgDir.closest('.lado') as HTMLElement).style.visibility = d ? 'visible' : 'hidden';
+        const spread = Math.floor(this.i / 2) + 1;
+        const total = Math.ceil(this.pgs.length / 2);
+        this.pos.textContent = `${spread} / ${total}`;
+      } else {
+        this.imgDir.src = this.src(this.i);
+        this.pos.textContent = `${this.i + 1} / ${this.pgs.length}`;
+      }
+      const passo = this.modo === 'spread' ? 2 : 1;
+      this.btnPrev.disabled = this.i <= 0;
+      this.btnNext.disabled = this.i + passo >= this.pgs.length;
+    }
+
+    reduced() {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
+
+    next() {
+      const passo = this.modo === 'spread' ? 2 : 1;
+      if (this.animando || this.i + passo >= this.pgs.length) return;
+      if (this.modo === 'single' || this.reduced()) { this.i += passo; this.render(); return; }
+      // virada de folha pra frente
+      this.animando = true;
+      this.faceFrente.src = this.src(this.i + 1); // direita atual
+      this.faceVerso.src = this.src(this.i + 2);  // nova esquerda
+      this.imgDir.src = this.src(this.i + 3);      // nova direita (revelada embaixo)
+      (this.imgDir.closest('.lado') as HTMLElement).style.visibility = this.src(this.i + 3) ? 'visible' : 'hidden';
+      this.folha.className = 'folha dir';
+      this.folha.hidden = false;
+      void this.folha.offsetWidth; // reflow
+      this.folha.classList.add('turn');
+      const done = () => {
+        this.folha.hidden = true;
+        this.folha.classList.remove('turn');
+        this.i += 2;
+        this.animando = false;
+        this.render();
+        this.folha.removeEventListener('transitionend', done);
+      };
+      this.folha.addEventListener('transitionend', done);
+    }
+
+    prev() {
+      const passo = this.modo === 'spread' ? 2 : 1;
+      if (this.animando || this.i <= 0) return;
+      if (this.modo === 'single' || this.reduced()) { this.i -= passo; this.render(); return; }
+      // virada de folha pra trás
+      this.animando = true;
+      this.imgEsq.src = this.src(this.i - 2);      // nova esquerda (revelada embaixo)
+      this.faceFrente.src = this.src(this.i);       // esquerda atual
+      this.faceVerso.src = this.src(this.i - 1);    // nova direita
+      this.folha.className = 'folha esq';
+      this.folha.hidden = false;
+      void this.folha.offsetWidth;
+      this.folha.classList.add('turn');
+      const done = () => {
+        this.folha.hidden = true;
+        this.folha.classList.remove('turn');
+        this.i -= 2;
+        this.animando = false;
+        this.render();
+        this.folha.removeEventListener('transitionend', done);
+      };
+      this.folha.addEventListener('transitionend', done);
+    }
+
+    bind() {
+      this.btnNext.addEventListener('click', () => this.next());
+      this.btnPrev.addEventListener('click', () => this.prev());
+      this.root.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); this.next(); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); this.prev(); }
+      });
+      this.reader.tabIndex = 0;
+      // swipe
+      let x0 = 0;
+      this.livro.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+      this.livro.addEventListener('touchend', (e) => {
+        const dx = e.changedTouches[0].clientX - x0;
+        if (Math.abs(dx) > 40) { dx < 0 ? this.next() : this.prev(); }
+      });
+      // troca de modo no resize
+      let m = this.modo;
+      window.addEventListener('resize', () => {
+        this.setModo();
+        if (this.modo !== m) {
+          m = this.modo;
+          if (this.modo === 'spread' && this.i % 2 === 1) this.i -= 1; // alinha ao par
+          this.render();
+        }
+      });
+    }
+  }
+
+  function initZines() {
+    document.querySelectorAll<HTMLElement>('.flip').forEach((el) => {
+      if (!el.dataset.mounted) { el.dataset.mounted = '1'; new Flip(el); }
+    });
+  }
+  document.addEventListener('astro:page-load', initZines);
+</script>

@@ -43,3 +43,13 @@ atualizado: 2026-07-06
 - **Bloco é transversal aos mundos.** Uma página `/bloco/<slug>` (em PT no M2) lista PT e EN juntos, cada card com seu carimbo — provado com o par gêmeo aparecendo lado a lado.
 
 **Filtros:** client-side puro (mostra/esconde por `data-formato`/`data-tags`), reatados em `astro:page-load` pra sobreviver às View Transitions. Sem JS, a home degrada mostrando tudo.
+
+## M3 — folheador de zine (2026-07-07)
+
+**O que passou a existir:** a zine deixou de ser páginas empilhadas e virou um **leitor que se folheia**. Em desktop, spread de 2 páginas com a folha virando sobre a lombada em 3D (frente/verso com `backface-visibility`); em mobile, 1 página por vez. Navega por botões, teclado ← → e swipe. Progressive enhancement: sem JS ou com reduced-motion, cai no empilhado do M2.
+
+**Modelo da virada (a parte que podia bugar):** ao avançar do spread i, a folha ocupa a metade direita, gira sobre a lombada esquerda (`transform-origin: left center`, `rotateY 0→-180`), com frente = página direita atual e verso = nova página esquerda; a nova direita é revelada embaixo. Ao voltar, espelhado na metade esquerda. Verificado por dado: frente/verso e páginas reveladas batem em ambas as direções.
+
+**Bug pego na verificação:** o fallback empilhado não sumia com JS. Causa clássica: o atributo HTML `hidden` perde pro `.empilhado { display: grid }` (o `[hidden]{display:none}` do user-agent tem especificidade menor). Corrigido com `.empilhado[hidden] { display: none; }` explícito.
+
+**Aprendizado transversal:** sempre que um elemento tem `display` próprio no CSS, o atributo `hidden` precisa de uma regra `[hidden]` própria pra vencer — senão fica "escondido" no DOM mas visível na tela.

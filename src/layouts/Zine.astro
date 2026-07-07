@@ -6,6 +6,7 @@ import Base from './Base.astro';
 import Cover from '../components/Cover.astro';
 import LangStamp from '../components/LangStamp.astro';
 import FormatBadge from '../components/FormatBadge.astro';
+import ZineFlip from '../components/ZineFlip.astro';
 import { UI, urlOf, homeOf, blocoUrl, type Post, type Bloco } from '../lib/i18n';
 
 interface Props {
@@ -53,21 +54,11 @@ const outroLabel = gemeo
 
     <div class="capa">
       <Cover seed={titulo} titulo={titulo} cover={cover} eager={true} />
-      <span class="folhear" title="M3">{t.folhear}</span>
     </div>
 
     <div class="prose narrow"><slot /></div>
 
-    {paginas.length > 0 && (
-      <div class="paginas">
-        {paginas.map((src, i) => (
-          <figure class="pag">
-            <img src={src} alt={`${titulo} — ${t.paginas} ${i + 1}`} loading={i < 2 ? 'eager' : 'lazy'} decoding="async" />
-            <figcaption>{String(i + 1).padStart(2, '0')}</figcaption>
-          </figure>
-        ))}
-      </div>
-    )}
+    {paginas.length > 0 && <ZineFlip paginas={paginas} titulo={titulo} lang={lang} />}
 
     {gemeo && (
       <aside class="gemeo narrow">
@@ -126,51 +117,10 @@ const outroLabel = gemeo
     overflow: hidden;
   }
   .capa :global(.cover) { aspect-ratio: 16 / 9; }
-  .folhear {
-    position: absolute;
-    top: 14px; left: 14px;
-    font-family: var(--f-mono);
-    font-size: var(--t-xs);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--fundo);
-    background: var(--fogo);
-    padding: 4px 10px;
-    border-radius: 4px;
-  }
 
   .prose { margin-top: 30px; line-height: 1.75; font-size: var(--t-md); }
   .prose :global(p) { margin: 0 0 1.3em; }
   .prose :global(a) { color: var(--fogo); }
-
-  /* páginas empilhadas — spread horizontal folheável vem no M3 */
-  .paginas {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-    max-width: 940px;
-    margin: 32px auto 0;
-    padding: 0 28px;
-  }
-  .pag { margin: 0; position: relative; }
-  .pag img {
-    width: 100%;
-    border: var(--borda);
-    border-radius: var(--raio);
-    display: block;
-  }
-  .pag figcaption {
-    position: absolute;
-    bottom: 8px; right: 10px;
-    font-family: var(--f-mono);
-    font-size: var(--t-xs);
-    color: var(--papel);
-    background: var(--cafe);
-    padding: 1px 7px;
-    border-radius: 3px;
-    font-variant-numeric: tabular-nums;
-  }
-  @media (max-width: 640px) { .paginas { grid-template-columns: 1fr; } }
 
   .gemeo { margin-top: 60px; max-width: 720px; margin-inline: auto; padding: 0 28px; }
   .gemeo a {

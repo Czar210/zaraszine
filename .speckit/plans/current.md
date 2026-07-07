@@ -4,7 +4,39 @@ atualizado: 2026-07-07
 status: em andamento
 ---
 
-# M2 — espinha dorsal editorial
+# M3 — folheador de zine
+
+> M1 (esqueleto) e M2 (formatos/blocos/filtros/copy) concluídos e deployados. Ver patch-notes.
+
+## Objetivo (1 frase)
+
+Trocar o fallback empilhado da zine por um leitor de spread que se folheia — a mecânica de virar página que dá vida ao formato gráfico.
+
+## Entregas
+- [x] `ZineFlip` — spread de 2 páginas em desktop com virada de folha sobre a lombada (frente/verso 3D)
+- [x] Navegação: botões ← →, teclado ← →, swipe touch; posição «spread / total» e limites (botões disabled)
+- [x] Modo mobile: 1 página por vez, conta por página; troca de modo no resize
+- [x] Progressive enhancement: sem JS / reduced-motion cai no empilhado do M2
+- [x] Integrado ao `Zine.astro` (removido o selo «folhear em breve»)
+
+## Critérios de aceite
+
+- [x] `npm run build` limpo — 7 páginas; sem hex fora dos tokens (lombada usa color-mix do café).
+- [x] Virada pra frente e pra trás com o modelo de folha correto (verificado: frente/verso e páginas reveladas certas).
+- [x] Teclado e botões avançam/voltam; limites desabilitam.
+- [x] Mobile mostra 1 página; fallback empilhado some com JS (corrigido bug hidden vs display:grid).
+
+## Bloqueadores conhecidos
+
+Nenhum. As páginas de exemplo são SVGs de andaime — César substitui pelas reais em `/public/zines/<slug>/`.
+
+## Próximo (backlog)
+
+Busca, RSS, paginação, página sobre/about, OG images dinâmicas, página que lista todos os blocos.
+
+---
+
+# M2 — espinha dorsal editorial  ✓ concluído
 
 > M1 (esqueleto Astro «zine terroso») concluído e **deployado na Vercel** em 06/07. Ver patch-notes.
 

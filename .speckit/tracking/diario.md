@@ -12,4 +12,5 @@ atualizado: 2026-07-06
 2026-07-06 [A2] M1 sob Aval total: esqueleto Astro 5+MDX, tokens «zine terroso», capas SVG procedurais, dois mundos PT/EN, post Z-shape; build limpo + verificado local
 2026-07-06 [A1] Fix bug do switch de idioma (mostrava PT/PT no mundo EN): slots fixos PT|EN, atual vira span aceso; verificado nos dois mundos
 2026-07-07 [A2] M2 sob Aval total: formatos zine/artigo/post + blocos + filtros + copy novo; sangramento removido; zine fallback (folheador=M3); build limpo + verificado local/mobile
+2026-07-07 [A1] M3: folheador de zine (ZineFlip) — spread 2-pág com virada de folha 3D, teclado/swipe/botões, mobile 1-pág, fallback empilhado sem JS; verificado local (desktop+mobile)
 ```
