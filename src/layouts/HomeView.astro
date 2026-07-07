@@ -1,0 +1,97 @@
+---
+/* HomeView — a home de um mundo. As páginas index (PT) e en/index (EN)
+   são cascas finas sobre isto. Card/block layout. */
+import Base from './Base.astro';
+import Marquee from '../components/Marquee.astro';
+import PostCard from '../components/PostCard.astro';
+import { UI, postsDoMundo, homeOf, type Lang } from '../lib/i18n';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = UI[lang];
+
+const posts = await postsDoMundo(lang);
+
+// chaves de tradução que existem NOS DOIS mundos → carimbo duplo
+const todos = await getCollection('posts', ({ data }) => !data.rascunho);
+const chavesGemeas = new Set<string>();
+for (const p of todos) {
+  if (!p.data.traducao) continue;
+  const parceiro = todos.find(
+    (q) => q.data.traducao === p.data.traducao && q.data.lang !== p.data.lang,
+  );
+  if (parceiro) chavesGemeas.add(p.data.traducao);
+}
+const temGemeo = (post: (typeof posts)[number]) =>
+  !!post.data.traducao && chavesGemeas.has(post.data.traducao);
+
+const outroLang: Lang = lang === 'pt' ? 'en' : 'pt';
+---
+
+<Base
+  title={lang === 'pt' ? 'zaraszine. · diário aberto' : 'zaraszine. · open diary'}
+  description={t.tese}
+  lang={lang}
+  outroHref={homeOf(outroLang)}
+  outroLabel={t.outroMundo}
+>
+  <section class="hero wrap">
+    <p class="eyebrow reveal">{lang === 'pt' ? 'diário aberto' : 'open diary'}</p>
+    <h1 class="reveal d1" set:html={
+      lang === 'pt'
+        ? 'Um diário aberto, impresso em <em>ouro</em> sobre café.'
+        : 'An open diary, printed in <em>gold</em> on coffee.'
+    } />
+    <p class="sub reveal d2">
+      {lang === 'pt'
+        ? 'Aprendizados e opiniões de engenharia. Escrito à mão, publicado por git push.'
+        : 'Engineering lessons and opinions. Written by hand, published by git push.'}
+    </p>
+  </section>
+
+  <Marquee />
+
+  <section class="wrap listagem">
+    <p class="eyebrow">{t.todos}</p>
+    {posts.length === 0 ? (
+      <p class="vazio">{t.vazio}</p>
+    ) : (
+      <div class="grid">
+        {posts.map((post) => <PostCard post={post} temGemeo={temGemeo(post)} />)}
+      </div>
+    )}
+  </section>
+</Base>
+
+<style>
+  .hero { padding: 76px 28px 44px; }
+  h1 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    color: var(--tinta);
+    font-size: var(--t-3xl);
+    line-height: 1.04;
+    margin: 0 0 26px;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    max-width: 16ch;
+  }
+  h1 :global(em) { font-style: normal; color: var(--fogo); }
+  .sub {
+    font-style: italic;
+    color: var(--meta);
+    font-size: var(--t-md);
+    margin: 0;
+    max-width: 52ch;
+  }
+  .listagem { padding-top: 60px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px;
+  }
+  .vazio { font-style: italic; color: var(--meta); }
+</style>

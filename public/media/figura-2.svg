@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-label="Figura de exemplo">
+  <rect width="640" height="400" fill="#1A100B"/>
+  <polygon points="120,340 320,60 380,360" fill="#FFB627" opacity="0.92"/>
+  <circle cx="470" cy="150" r="110" fill="#4A5D23" opacity="0.9"/>
+  <g transform="translate(300 210) rotate(8)"><rect x="-300" y="-22" width="600" height="44" fill="#D9A24B" opacity="0.85"/></g>
+  <rect x="4" y="4" width="632" height="392" fill="none" stroke="#241811" stroke-opacity="0.6" stroke-width="8"/>
+</svg>

@@ -1,0 +1,39 @@
+---
+/* Carimbo de idioma — mora na linha de meta, ao lado do tema.
+   'pt' | 'en' | 'both' (post com gêmeo nas duas línguas). */
+interface Props {
+  lang: 'pt' | 'en' | 'both';
+}
+const { lang } = Astro.props;
+---
+
+{lang === 'both' ? (
+  <span class="stamp both"><span class="p">PT</span><i>✳</i><span class="e">EN</span></span>
+) : (
+  <span class={`stamp ${lang}`}>{lang.toUpperCase()}</span>
+)}
+
+<style>
+  .stamp {
+    display: inline-block;
+    font-family: var(--f-mono);
+    font-weight: 700;
+    font-size: var(--t-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 3px 10px 2px;
+    border: 2px solid currentColor;
+    border-radius: 7px 3px 6px 4px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .stamp.pt { color: var(--pt); transform: rotate(-4deg); }
+  .stamp.en { color: var(--en); transform: rotate(3deg); }
+  .stamp.both {
+    transform: rotate(-2deg);
+    border-color: var(--pt) var(--en) var(--en) var(--pt);
+  }
+  .stamp.both .p { color: var(--pt); }
+  .stamp.both .e { color: var(--en); }
+  .stamp.both i { font-style: normal; color: var(--tinta); padding: 0 3px; }
+</style>

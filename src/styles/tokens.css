@@ -1,0 +1,81 @@
+/* ============================================================
+   tokens.css — A FONTE DA VERDADE do ZarasZine
+   Direção «zine terroso» (decisions.md, 2026-07-06).
+   Nenhuma cor ou fonte pode existir fora deste arquivo.
+   ============================================================ */
+
+@font-face {
+  font-family: 'Young Serif';
+  src: url('/fonts/young-serif-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Literata';
+  src: url('/fonts/literata-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Literata';
+  src: url('/fonts/literata-400-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Courier Prime';
+  src: url('/fonts/courier-prime-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Courier Prime';
+  src: url('/fonts/courier-prime-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  /* --- paleta: cada cor tem um cargo --- */
+  --fundo:      #241811; /* bistre profundo — o chão de tudo */
+  --superficie: #3D2B1F; /* bistre — cards e superfícies */
+  --cafe:       #1A100B; /* café — sombras, molduras */
+  --linha:      #55402D; /* traço/borda derivado do bistre */
+  --tinta:      #D9A24B; /* ouro-velho — títulos */
+  --texto:      #E9C289; /* ouro-claro — texto corrido */
+  --meta:       #B48D5B; /* ouro-fosco — metadados, apartes */
+  --fogo:       #FFB627; /* xanthous — links e ação, com avareza */
+  --pt:         #E08D3C; /* tigers-eye — carimbo PT */
+  --en:         #93A757; /* moss claro — carimbo EN (deriva do dark-moss #4A5D23) */
+  --moss:       #4A5D23; /* dark-moss-green — canônico */
+  --papel:      #FAD6A5; /* sunset — capas e fita */
+
+  /* --- tipografia: três vozes, três cargos --- */
+  --f-display: 'Young Serif', Georgia, 'Times New Roman', serif;
+  --f-body:    'Literata', Georgia, serif;
+  --f-mono:    'Courier Prime', 'Courier New', monospace;
+
+  /* escala de tipo (base 17px, razão ~1.28) */
+  --t-xs:   0.72rem;
+  --t-sm:   0.88rem;
+  --t-base: 1rem;
+  --t-md:   1.15rem;
+  --t-lg:   1.5rem;
+  --t-xl:   1.9rem;
+  --t-2xl:  clamp(2.2rem, 5vw, 3.4rem);
+  --t-3xl:  clamp(2.6rem, 6.4vw, 4.8rem);
+
+  /* --- espaço e forma --- */
+  --medida: 65ch;             /* largura de leitura confortável */
+  --raio:   6px;
+  --gap:    clamp(1rem, 3vw, 1.6rem);
+  --borda:  2px solid var(--linha);
+
+  /* --- movimento --- */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}

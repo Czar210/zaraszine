@@ -1,0 +1,67 @@
+---
+/* Base — o shell de toda página. Fontes, tokens, atmosfera,
+   View Transitions (animação de entrada entre navegações). */
+import { ClientRouter } from 'astro:transitions';
+import Masthead from '../components/Masthead.astro';
+import type { Lang } from '../lib/i18n';
+import '../styles/tokens.css';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Lang;
+  outroHref: string;
+  outroLabel: string;
+}
+const { title, description, lang, outroHref, outroLabel } = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="dark" />
+    {/* espelho literal de --fundo: meta theme-color não aceita var() (A2 se mudar) */}
+    <meta name="theme-color" content="#241811" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <ClientRouter />
+  </head>
+  <body>
+    <Masthead lang={lang} outroHref={outroHref} outroLabel={outroLabel} />
+    <main>
+      <slot />
+    </main>
+    <footer class="foot wrap">
+      <span class="wm">zaras<b>zine.</b></span>
+      <span class="by">escrito à mão · publicado por git · {new Date().getFullYear()}</span>
+    </footer>
+  </body>
+</html>
+
+<style>
+  main { min-height: 60vh; }
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 80px;
+    padding-top: 26px;
+    padding-bottom: 60px;
+    border-top: var(--borda);
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    color: var(--meta);
+    letter-spacing: 0.08em;
+  }
+  .wm { font-family: var(--f-display); font-size: var(--t-md); color: var(--tinta); }
+  .wm b { color: var(--fogo); font-weight: 400; }
+</style>

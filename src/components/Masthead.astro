@@ -1,0 +1,65 @@
+---
+/* Masthead — wordmark + switch de mundo.
+   `outroHref` é calculado pela página: gêmeo do post, ou home do
+   outro mundo. `outroLabel` diz pra onde o switch leva. */
+import type { Lang } from '../lib/i18n';
+import { homeOf } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+  outroHref: string;
+  outroLabel: string;
+}
+const { lang, outroHref, outroLabel } = Astro.props;
+---
+
+<header class="mast wrap">
+  <a class="wordmark" href={homeOf(lang)}>zaras<b>zine.</b></a>
+  <nav class="switch" aria-label={lang === 'pt' ? 'idioma' : 'language'}>
+    <span class={`opt ${lang === 'pt' ? 'on pt' : ''}`}>PT</span>
+    <a
+      class={`opt link ${lang === 'en' ? 'on en' : ''}`}
+      href={outroHref}
+      title={outroLabel}
+    >{lang === 'pt' ? 'EN' : 'PT'}</a>
+  </nav>
+</header>
+
+<style>
+  .mast {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 26px 28px 18px;
+    border-bottom: var(--borda);
+  }
+  .wordmark {
+    font-family: var(--f-display);
+    font-size: var(--t-xl);
+    color: var(--tinta);
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+  .wordmark b { color: var(--fogo); font-weight: 400; }
+  .wordmark:hover b { color: var(--tinta); }
+
+  .switch {
+    display: inline-flex;
+    border: var(--borda);
+    border-radius: 999px;
+    overflow: hidden;
+    font-family: var(--f-mono);
+    font-size: var(--t-sm);
+  }
+  .opt {
+    padding: 5px 14px;
+    color: var(--meta);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    line-height: 1.5;
+  }
+  .opt.link:hover { color: var(--fogo); }
+  .opt.on.pt { background: var(--pt); color: var(--fundo); font-weight: 700; }
+  .opt.on.en { background: var(--en); color: var(--fundo); font-weight: 700; }
+</style>
