@@ -1,38 +1,39 @@
 ---
 dono: César
-atualizado: 2026-07-06
+atualizado: 2026-07-07
 status: em andamento
 ---
 
-# M1 — Fundação visual + esqueleto Astro
+# M2 — espinha dorsal editorial
+
+> M1 (esqueleto Astro «zine terroso») concluído e **deployado na Vercel** em 06/07. Ver patch-notes.
 
 ## Objetivo (1 frase)
 
-Sair do zero pra um blog Astro navegável com a identidade visual fechada (tokens, tipografia, paleta) e 1 post de exemplo publicável via git.
+Dar ao blog uma estrutura editorial de verdade: três formatos (zine/artigo/post), blocos que agrupam peças, filtros de navegação e o copy novo.
 
 ## Entregas
-- [x] Esqueleto Astro 5 + MDX com content collection de posts (titulo, resumo, data, lang, tags, cover?, traducao?, rascunho)
-- [x] Arquivo de tokens de design (`src/styles/tokens.css` — cargos e vozes «zine terroso»)
-- [x] Home em card/block layout interativo (`HomeView`, dois mundos PT/EN)
-- [x] Template de post em Z-shape/assimétrico (imagens sangram e alternam de lado via `rehypeFiguras`)
-- [x] Gerador procedural de capas em build (`src/lib/cover.ts`, SVG determinístico; override por frontmatter)
-- [x] Animações de entrada (View Transitions + reveal, reduced-motion respeitado)
-- [x] Posts de exemplo (andaimes descartáveis: par gêmeo PT/EN + um só-PT) rodando local + build limpo
-- [ ] **Deploy na Vercel** ← única pendência do M1 (é do Diretor: conectar repo na Vercel)
+- [x] Formatos `zine | artigo | post` no schema, com selo por cor e layout próprio
+- [x] Blocos (coletânea transversal aos mundos) + página `/bloco/<slug>`
+- [x] Filtros client-side na home (por formato e por tag), com estado vazio
+- [x] Copy novo (título com «código» em fogo, subtexto, marquee **por mundo** PT/EN)
+- [x] Zine: layout de fallback (páginas empilhadas 2-col + selo «folhear em breve»); folheador real fica pro M3
+- [x] Sangramento removido — imagem de artigo vira respiro limpo (sem o translate torto)
+- [x] Jogo de exemplos-andaime (1 zine 4-pág + 1 artigo + 2 posts gêmeos + 1 bloco), build limpo
 
 ## Critérios de aceite
 
-- [x] `npm run build` limpo — 5 páginas geradas, zero warning.
-- [x] Post novo entra só com um `.mdx` novo — provado com 3 andaimes.
-- [x] Capa determinística (HTML idêntico byte-a-byte entre 2 builds); imagem própria (`cover`) vence.
-- [x] Nenhuma cor/fonte fora dos tokens — auditado; 2 exceções documentadas (PAL do cover.ts, theme-color meta).
-- [x] Switch PT↔EN funciona; post com `traducao` mostra PT✳EN e o switch pula pro gêmeo.
-
-## Evidências (2026-07-06, local)
-
-- Build: `5 page(s) built`, sem erro. Determinismo: `sha1` idêntico em 2 builds do post.
-- Verificado no dev (screenshots + medições): hero, cards com carimbo na meta, post Z-shape (fig-r 397→1024 / fig-l 241→868 em 1280px), home EN com 1 card PT✳EN, switch de gêmeo → `/en/posts/andaime-en`.
+- [x] `npm run build` limpo — 7 páginas.
+- [x] Filtro por formato/tag funciona (verificado: zine→só zine, post→só post, tudo→volta).
+- [x] Cada formato com seu selo e layout; zine mostra páginas + «folhear em breve».
+- [x] Página de bloco lista as peças certas (4, transversal: 2 pt + par gêmeo PT✳EN).
+- [x] Copy novo no ar nos dois mundos; marquee correto por idioma; artigo sem torto.
+- [x] Responsivo (verificado em mobile 375px) e sem hex fora dos tokens.
 
 ## Bloqueadores conhecidos
 
 Nenhum.
+
+## Próximo (M3)
+
+Folheador de zine: spread de 2 páginas, vira-página (teclado/swipe), capa de entrada — consumindo o mesmo campo `paginas`. Depende de César fornecer páginas reais de zine.

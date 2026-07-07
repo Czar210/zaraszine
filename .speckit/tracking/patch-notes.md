@@ -27,3 +27,19 @@ atualizado: 2026-07-06
 **Causa:** o Masthead tinha um slot esquerdo fixo em "PT" e um slot direito dinâmico (`lang==='pt' ? 'EN' : 'PT'`). No mundo EN os dois viravam "PT" e o realce caía no link, não na posição do idioma.
 
 **Correção:** os dois slots agora são fixos — PT à esquerda, EN à direita. O idioma do mundo atual vira `<span>` estático aceso (com `aria-current`); o outro é `<a>` pro mundo oposto. Verificado nos dois mundos (PT acende tigers-eye à esquerda; EN acende moss à direita).
+
+## M2 — espinha dorsal editorial (2026-07-07)
+
+**O que passou a existir:** o blog virou uma publicação com estrutura. Três **formatos** (zine/artigo/post), cada um com selo colorido e física de leitura própria; **blocos** que agrupam peças por tema (transversais aos dois mundos); **filtros** por formato e tag na home; e o **copy novo** (título com «código» em fogo, subtexto, marquee agora por-mundo). Build limpo (7 páginas), verificado local + mobile.
+
+**Formatos:**
+- **zine** — gráfica, folheável. No M2 é fallback: capa + páginas empilhadas 2-col + selo «folhear (em breve)». O folheador de spread é M3. As páginas são imagens soltas do César em `/public/zines/<slug>/`.
+- **artigo** — longo, capa hero, corpo espaçoso.
+- **post** — curto, sem capa hero, quase um comentário. (label EN = «note».)
+
+**Decisões de design na execução:**
+- **O sangramento morreu.** Estava fraco de origem: a coluna de leitura (720px) sufocava o efeito — a imagem escapava só ~24px, lia como torto, não como sangrar. Em vez de forçar, migrei o drama visual pro formato zine (onde faz sentido) e no artigo a imagem virou respiro limpo. Removi o rehypeFiguras (código que já não servia).
+- **Sem substantivo guarda-chuva.** «posts» agora é um formato, não o conjunto. A home é «o mais recente» e os filtros cortam. Menos jargão.
+- **Bloco é transversal aos mundos.** Uma página `/bloco/<slug>` (em PT no M2) lista PT e EN juntos, cada card com seu carimbo — provado com o par gêmeo aparecendo lado a lado.
+
+**Filtros:** client-side puro (mostra/esconde por `data-formato`/`data-tags`), reatados em `astro:page-load` pra sobreviver às View Transitions. Sem JS, a home degrada mostrando tudo.

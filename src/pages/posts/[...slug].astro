@@ -1,8 +1,9 @@
 ---
-/* Rota dos posts PT — /posts/<slug>. */
+/* Rota das peças PT — /posts/<slug>. Escolhe layout por formato. */
 import { render } from 'astro:content';
 import PostLayout from '../../layouts/Post.astro';
-import { postsDoMundo, gemeoDe, slugOf, tempoLeitura } from '../../lib/i18n';
+import ZineLayout from '../../layouts/Zine.astro';
+import { postsDoMundo, gemeoDe, blocoDe, slugOf, tempoLeitura } from '../../lib/i18n';
 
 export async function getStaticPaths() {
   const posts = await postsDoMundo('pt');
@@ -12,9 +13,12 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 const gemeo = await gemeoDe(post);
+const bloco = post.data.bloco ? await blocoDe(post.data.bloco) : null;
 const minutos = tempoLeitura(post.body ?? '');
 ---
 
-<PostLayout post={post} gemeo={gemeo} minutos={minutos}>
-  <Content />
-</PostLayout>
+{post.data.formato === 'zine' ? (
+  <ZineLayout post={post} gemeo={gemeo} bloco={bloco}><Content /></ZineLayout>
+) : (
+  <PostLayout post={post} gemeo={gemeo} bloco={bloco} minutos={minutos}><Content /></PostLayout>
+)}

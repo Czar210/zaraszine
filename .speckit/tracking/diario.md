@@ -11,4 +11,5 @@ atualizado: 2026-07-06
 2026-07-06 [A1] Scaffold do projeto via /novo-projeto: pasta-base copiada, poda N2, CLAUDE.md preenchido — M0
 2026-07-06 [A2] M1 sob Aval total: esqueleto Astro 5+MDX, tokens «zine terroso», capas SVG procedurais, dois mundos PT/EN, post Z-shape; build limpo + verificado local
 2026-07-06 [A1] Fix bug do switch de idioma (mostrava PT/PT no mundo EN): slots fixos PT|EN, atual vira span aceso; verificado nos dois mundos
+2026-07-07 [A2] M2 sob Aval total: formatos zine/artigo/post + blocos + filtros + copy novo; sangramento removido; zine fallback (folheador=M3); build limpo + verificado local/mobile
 ```

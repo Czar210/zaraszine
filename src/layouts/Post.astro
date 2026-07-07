@@ -1,20 +1,24 @@
 ---
-/* Post — template de leitura. Hero com a capa, depois o corpo em
-   coluna editorial; imagens grandes sangram e ALTERNAM de lado
-   (o Z-shape/assimétrico nasce do CSS, sem exigir nada do autor). */
+/* Post — template de leitura para ARTIGO e POST.
+   - artigo: capa hero + corpo espaçoso, imagens de respiro (largura de conteúdo).
+   - post:   sem capa hero, compacto, quase um comentário.
+   (zine tem layout próprio em Zine.astro.) */
 import Base from './Base.astro';
 import Cover from '../components/Cover.astro';
 import LangStamp from '../components/LangStamp.astro';
-import { UI, urlOf, homeOf, type Post } from '../lib/i18n';
+import FormatBadge from '../components/FormatBadge.astro';
+import { UI, urlOf, homeOf, blocoUrl, type Post, type Bloco } from '../lib/i18n';
 
 interface Props {
   post: Post;
   gemeo: Post | null;
+  bloco: Bloco | null;
   minutos: number;
 }
-const { post, gemeo, minutos } = Astro.props;
-const { titulo, resumo, tags, data, lang, cover } = post.data;
+const { post, gemeo, bloco, minutos } = Astro.props;
+const { titulo, resumo, tags, data, lang, formato, cover } = post.data;
 const t = UI[lang];
+const isArtigo = formato === 'artigo';
 const dataFmt = data.toLocaleDateString(lang === 'en' ? 'en-US' : 'pt-BR', {
   day: '2-digit', month: 'long', year: 'numeric',
 });
@@ -31,9 +35,13 @@ const outroLabel = gemeo
   outroHref={outroHref}
   outroLabel={outroLabel}
 >
-  <article class="post">
+  <article class={`post fmt-${formato}`}>
     <header class="head narrow">
       <a class="volta" href={homeOf(lang)}>{t.volta}</a>
+      <div class="selos">
+        <FormatBadge formato={formato} lang={lang} />
+        {bloco && <a class="bloco-link" href={blocoUrl(bloco.id)}>{t.bloco}: {bloco.data.titulo}</a>}
+      </div>
       <h1>{titulo}</h1>
       <p class="resumo">{resumo}</p>
       <div class="meta">
@@ -46,9 +54,11 @@ const outroLabel = gemeo
       </div>
     </header>
 
-    <div class="capa">
-      <Cover seed={titulo} titulo={titulo} cover={cover} eager={true} />
-    </div>
+    {isArtigo && (
+      <div class="capa">
+        <Cover seed={titulo} titulo={titulo} cover={cover} eager={true} />
+      </div>
+    )}
 
     <div class="prose narrow">
       <slot />
@@ -74,16 +84,36 @@ const outroLabel = gemeo
     text-transform: uppercase;
     text-decoration: none;
   }
+  .selos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .bloco-link {
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.06em;
+    color: var(--meta);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--linha);
+  }
+  .bloco-link:hover { color: var(--fogo); border-color: var(--fogo); }
+
   h1 {
     font-family: var(--f-display);
     font-weight: 400;
     color: var(--tinta);
-    font-size: var(--t-3xl);
-    line-height: 1.04;
+    line-height: 1.05;
     letter-spacing: -0.015em;
     text-wrap: balance;
-    margin: 18px 0 16px;
+    margin: 14px 0 16px;
   }
+  /* artigo grita no título; post é mais contido */
+  .fmt-artigo h1 { font-size: var(--t-3xl); }
+  .fmt-post h1 { font-size: var(--t-2xl); }
+
   .resumo {
     font-style: italic;
     color: var(--meta);
@@ -111,12 +141,13 @@ const outroLabel = gemeo
     border: var(--borda);
     border-radius: var(--raio);
     overflow: hidden;
-    aspect-ratio: 16 / 9;
   }
   .capa :global(.cover) { aspect-ratio: 16 / 9; }
 
   /* corpo editorial */
-  .prose { font-size: var(--t-md); line-height: 1.75; }
+  .prose { margin-top: 34px; line-height: 1.75; }
+  .fmt-artigo .prose { font-size: var(--t-md); }
+  .fmt-post .prose { font-size: var(--t-base); }
   .prose :global(p) { margin: 0 0 1.3em; }
   .prose :global(h2) {
     font-family: var(--f-display);
@@ -161,19 +192,13 @@ const outroLabel = gemeo
   .prose :global(hr) { border: none; border-top: var(--borda); margin: 2.4em 0; }
   .prose :global(a) { color: var(--fogo); }
 
-  /* imagens sangram e ALTERNAM de lado — o zigzag do corpo */
+  /* imagem = respiro limpo: largura da coluna, centrada, sem torto */
   .prose :global(img) {
     display: block;
     width: 100%;
     border: var(--borda);
     border-radius: var(--raio);
     margin: 2em 0;
-  }
-  @media (min-width: 900px) {
-    .prose :global(p.fig-r), .prose :global(p.fig-l) { margin: 2em 0; }
-    .prose :global(p.fig-r img), .prose :global(p.fig-l img) { width: min(58vw, 620px); margin-block: 0; }
-    .prose :global(p.fig-r img) { margin-left: auto; transform: translateX(9%) rotate(1deg); }
-    .prose :global(p.fig-l img) { margin-right: auto; transform: translateX(-9%) rotate(-1deg); }
   }
 
   .gemeo { margin-top: 60px; }

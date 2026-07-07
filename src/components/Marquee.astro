@@ -1,12 +1,15 @@
 ---
-/* Marquee — a faixa que corre. Bilíngue de propósito: o blog inteiro
-   vive nas duas línguas, e a fita é onde elas se encostam. */
-const frase = 'aprender em público ✳ learn in public ✳ escrito à mão, publicado por git ✳ written by hand, published by git ✳ ';
+/* Marquee — a faixa que corre, no idioma do mundo atual (por prop). */
+interface Props {
+  frase: string;
+}
+const { frase } = Astro.props;
+const texto = `${frase} ✳ `;
 ---
 
 <div class="band" aria-hidden="true">
   <div class="band-track">
-    <span>{frase}</span><span>{frase}</span>
+    <span>{texto.repeat(3)}</span><span>{texto.repeat(3)}</span>
   </div>
 </div>
 
@@ -19,12 +22,12 @@ const frase = 'aprender em público ✳ learn in public ✳ escrito à mão, pub
   .band-track {
     display: flex;
     width: max-content;
-    animation: band-slide 34s linear infinite;
+    animation: band-slide 40s linear infinite;
   }
   .band span {
     font-family: var(--f-mono);
     font-size: var(--t-sm);
-    letter-spacing: 0.26em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--tinta);
     padding: 11px 0;
@@ -34,5 +37,6 @@ const frase = 'aprender em público ✳ learn in public ✳ escrito à mão, pub
   @media (prefers-reduced-motion: reduce) {
     .band-track { animation: none; }
     .band span { text-overflow: ellipsis; overflow: hidden; }
+    .band span + span { display: none; }
   }
 </style>

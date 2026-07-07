@@ -1,10 +1,10 @@
 ---
-/* HomeView — a home de um mundo. As páginas index (PT) e en/index (EN)
-   são cascas finas sobre isto. Card/block layout. */
+/* HomeView — a home de um mundo. Card/block layout com filtros por
+   formato e tema. As páginas index (PT) e en/index (EN) são cascas finas. */
 import Base from './Base.astro';
 import Marquee from '../components/Marquee.astro';
 import PostCard from '../components/PostCard.astro';
-import { UI, postsDoMundo, homeOf, type Lang } from '../lib/i18n';
+import { UI, postsDoMundo, tagsDe, homeOf, FORMATO_LABEL, type Lang, type Formato } from '../lib/i18n';
 import { getCollection } from 'astro:content';
 
 interface Props {
@@ -14,6 +14,14 @@ const { lang } = Astro.props;
 const t = UI[lang];
 
 const posts = await postsDoMundo(lang);
+const tags = tagsDe(posts);
+
+// título com a palavra-realce em fogo
+const [antes, depois] = t.titulo.split(t.realce);
+
+// formatos presentes neste mundo, na ordem de destaque
+const ordem: Formato[] = ['zine', 'artigo', 'post'];
+const formatosPresentes = ordem.filter((f) => posts.some((p) => p.data.formato === f));
 
 // chaves de tradução que existem NOS DOIS mundos → carimbo duplo
 const todos = await getCollection('posts', ({ data }) => !data.rascunho);
@@ -33,38 +41,98 @@ const outroLang: Lang = lang === 'pt' ? 'en' : 'pt';
 
 <Base
   title={lang === 'pt' ? 'zaraszine. · diário aberto' : 'zaraszine. · open diary'}
-  description={t.tese}
+  description={t.sub}
   lang={lang}
   outroHref={homeOf(outroLang)}
   outroLabel={t.outroMundo}
 >
   <section class="hero wrap">
-    <p class="eyebrow reveal">{lang === 'pt' ? 'diário aberto' : 'open diary'}</p>
-    <h1 class="reveal d1" set:html={
-      lang === 'pt'
-        ? 'Um diário aberto, impresso em <em>ouro</em> sobre café.'
-        : 'An open diary, printed in <em>gold</em> on coffee.'
-    } />
-    <p class="sub reveal d2">
-      {lang === 'pt'
-        ? 'Aprendizados e opiniões de engenharia. Escrito à mão, publicado por git push.'
-        : 'Engineering lessons and opinions. Written by hand, published by git push.'}
-    </p>
+    <p class="eyebrow reveal">{t.eyebrow}</p>
+    <h1 class="reveal d1">{antes}<em>{t.realce}</em>{depois}</h1>
+    <p class="sub reveal d2">{t.sub}</p>
   </section>
 
-  <Marquee />
+  <Marquee frase={t.marquee} />
 
   <section class="wrap listagem">
-    <p class="eyebrow">{t.todos}</p>
+    <div class="barra">
+      <p class="eyebrow">{t.recentes}</p>
+      {posts.length > 0 && (
+        <div class="filtros" role="group" aria-label={t.tudo}>
+          <button class="chip fmt on" data-fmt="all" aria-pressed="true">{t.tudo}</button>
+          {formatosPresentes.map((f) => (
+            <button class="chip fmt" data-fmt={f} aria-pressed="false">{FORMATO_LABEL[f][lang]}</button>
+          ))}
+          {tags.length > 0 && <span class="sep" aria-hidden="true">/</span>}
+          {tags.map((tag) => (
+            <button class="chip tag" data-tag={tag} aria-pressed="false">{tag}</button>
+          ))}
+        </div>
+      )}
+    </div>
+
     {posts.length === 0 ? (
       <p class="vazio">{t.vazio}</p>
     ) : (
-      <div class="grid">
-        {posts.map((post) => <PostCard post={post} temGemeo={temGemeo(post)} />)}
-      </div>
+      <>
+        <div class="grid" id="grid">
+          {posts.map((post) => <PostCard post={post} temGemeo={temGemeo(post)} />)}
+        </div>
+        <p class="vazio vazio-filtro" hidden>{t.vazioFiltro}</p>
+      </>
     )}
   </section>
 </Base>
+
+<script>
+  function initFiltros() {
+    const grid = document.getElementById('grid');
+    if (!grid) return;
+    const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.filtros .chip'));
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>('.card'));
+    const vazio = document.querySelector<HTMLElement>('.vazio-filtro');
+    let fmt = 'all';
+    const tagsAtivas = new Set<string>();
+
+    function aplicar() {
+      let visiveis = 0;
+      for (const card of cards) {
+        const cf = card.dataset.formato ?? '';
+        const ct = (card.dataset.tags ?? '').split('|').filter(Boolean);
+        const okFmt = fmt === 'all' || cf === fmt;
+        const okTag = tagsAtivas.size === 0 || ct.some((x) => tagsAtivas.has(x));
+        const show = okFmt && okTag;
+        card.hidden = !show;
+        if (show) visiveis++;
+      }
+      if (vazio) vazio.hidden = visiveis !== 0;
+    }
+
+    for (const chip of chips) {
+      chip.addEventListener('click', () => {
+        if (chip.dataset.fmt) {
+          fmt = chip.dataset.fmt;
+          for (const c of chips) {
+            if (c.dataset.fmt) {
+              const on = c === chip;
+              c.classList.toggle('on', on);
+              c.setAttribute('aria-pressed', String(on));
+            }
+          }
+        } else if (chip.dataset.tag) {
+          const tag = chip.dataset.tag;
+          if (tagsAtivas.has(tag)) tagsAtivas.delete(tag);
+          else tagsAtivas.add(tag);
+          const on = tagsAtivas.has(tag);
+          chip.classList.toggle('on', on);
+          chip.setAttribute('aria-pressed', String(on));
+        }
+        aplicar();
+      });
+    }
+  }
+  document.addEventListener('astro:page-load', initFiltros);
+</script>
 
 <style>
   .hero { padding: 76px 28px 44px; }
@@ -72,26 +140,52 @@ const outroLang: Lang = lang === 'pt' ? 'en' : 'pt';
     font-family: var(--f-display);
     font-weight: 400;
     color: var(--tinta);
-    font-size: var(--t-3xl);
-    line-height: 1.04;
+    font-size: var(--t-2xl);
+    line-height: 1.08;
     margin: 0 0 26px;
     letter-spacing: -0.015em;
     text-wrap: balance;
-    max-width: 16ch;
+    max-width: 22ch;
   }
-  h1 :global(em) { font-style: normal; color: var(--fogo); }
+  h1 em { font-style: normal; color: var(--fogo); }
   .sub {
     font-style: italic;
     color: var(--meta);
     font-size: var(--t-md);
     margin: 0;
-    max-width: 52ch;
+    max-width: 54ch;
   }
-  .listagem { padding-top: 60px; }
+  .listagem { padding-top: 56px; }
+  .barra { margin-bottom: 26px; }
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .chip {
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--meta);
+    background: transparent;
+    border: 1px solid var(--linha);
+    border-radius: 999px;
+    padding: 5px 13px;
+    cursor: pointer;
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
+  }
+  .chip:hover { color: var(--texto); border-color: var(--meta); }
+  .chip.on { color: var(--fundo); background: var(--fogo); border-color: var(--fogo); font-weight: 700; }
+  .chip.tag.on { background: var(--tinta); border-color: var(--tinta); }
+  .sep { color: var(--linha); padding: 0 4px; }
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 24px;
   }
+  .card[hidden] { display: none; }
   .vazio { font-style: italic; color: var(--meta); }
 </style>

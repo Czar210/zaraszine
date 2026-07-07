@@ -1,0 +1,31 @@
+---
+/* Selo de formato — hierarquia por cor: zine grita (fogo),
+   artigo firme (ouro), post sussurra (meta). */
+import { FORMATO_LABEL, type Formato, type Lang } from '../lib/i18n';
+
+interface Props {
+  formato: Formato;
+  lang: Lang;
+}
+const { formato, lang } = Astro.props;
+const label = FORMATO_LABEL[formato][lang];
+---
+
+<span class={`fmt fmt-${formato}`}>{label}</span>
+
+<style>
+  .fmt {
+    display: inline-block;
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 2px 9px;
+    border-radius: 3px;
+    line-height: 1.4;
+    border: 1px solid currentColor;
+  }
+  .fmt-zine { color: var(--fogo); }
+  .fmt-artigo { color: var(--tinta); }
+  .fmt-post { color: var(--meta); }
+</style>

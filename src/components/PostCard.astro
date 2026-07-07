@@ -1,8 +1,10 @@
 ---
-/* PostCard — a peça da home. Capa limpa em cima; a linha de meta
-   embaixo carrega o carimbo de idioma AO LADO do tema (nunca na capa). */
+/* PostCard — a peça da home. Capa limpa em cima; linha de meta embaixo
+   com selo de FORMATO + carimbo de idioma + tema. data-* alimentam os
+   filtros client-side. */
 import Cover from './Cover.astro';
 import LangStamp from './LangStamp.astro';
+import FormatBadge from './FormatBadge.astro';
 import { urlOf, type Post } from '../lib/i18n';
 
 interface Props {
@@ -10,7 +12,7 @@ interface Props {
   temGemeo?: boolean;
 }
 const { post, temGemeo = false } = Astro.props;
-const { titulo, resumo, tags, data, lang, cover } = post.data;
+const { titulo, resumo, tags, data, lang, formato, cover } = post.data;
 const tema = tags[0];
 const stamp = temGemeo ? 'both' : lang;
 const dataFmt = data.toLocaleDateString(lang === 'en' ? 'en-US' : 'pt-BR', {
@@ -18,16 +20,16 @@ const dataFmt = data.toLocaleDateString(lang === 'en' ? 'en-US' : 'pt-BR', {
 });
 ---
 
-<article class="card">
+<article class="card" data-formato={formato} data-tags={tags.join('|')}>
   <a class="hit" href={urlOf(post)} aria-label={titulo}>
     <Cover seed={titulo} titulo={titulo} cover={cover} />
     <div class="meta">
+      <FormatBadge formato={formato} lang={lang} />
       <LangStamp lang={stamp} />
       {tema && <span class="tag">{tema}</span>}
-      <i>✳</i>
-      <time datetime={data.toISOString()}>{dataFmt}</time>
     </div>
     <p class="excerpt">{resumo}</p>
+    <p class="date"><time datetime={data.toISOString()}>{dataFmt}</time></p>
   </a>
 </article>
 
@@ -48,26 +50,32 @@ const dataFmt = data.toLocaleDateString(lang === 'en' ? 'en-US' : 'pt-BR', {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     padding: 16px 16px 4px;
     font-family: var(--f-mono);
     font-size: var(--t-xs);
     color: var(--meta);
     letter-spacing: 0.06em;
   }
-  .meta i { font-style: normal; color: var(--fogo); }
   .tag {
     border: 1px solid var(--linha);
     border-radius: 999px;
     padding: 2px 10px;
   }
-  time { font-variant-numeric: tabular-nums; }
   .excerpt {
     font-style: italic;
     font-size: var(--t-sm);
     color: var(--texto);
     margin: 0;
-    padding: 6px 16px 18px;
+    padding: 8px 16px 4px;
     line-height: 1.5;
+  }
+  .date {
+    margin: 0;
+    padding: 4px 16px 16px;
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    color: var(--meta);
+    font-variant-numeric: tabular-nums;
   }
 </style>

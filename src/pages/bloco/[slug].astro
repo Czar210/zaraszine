@@ -1,0 +1,80 @@
+---
+/* Página de um bloco — a coletânea temática. Transversal aos dois mundos:
+   mostra todas as peças do bloco (PT e EN), cada card com seu carimbo.
+   No M2 vive em PT; versão por-mundo pode vir depois se fizer falta. */
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import { UI, postsDoBloco, homeOf } from '../../lib/i18n';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const blocos = await getCollection('blocos');
+  return blocos.map((bloco) => ({ params: { slug: bloco.id }, props: { bloco } }));
+}
+
+const { bloco } = Astro.props;
+const posts = await postsDoBloco(bloco.id);
+const t = UI.pt;
+
+// gêmeos (para o carimbo duplo nos cards)
+const todos = await getCollection('posts', ({ data }) => !data.rascunho);
+const chavesGemeas = new Set<string>();
+for (const p of todos) {
+  if (!p.data.traducao) continue;
+  if (todos.find((q) => q.data.traducao === p.data.traducao && q.data.lang !== p.data.lang))
+    chavesGemeas.add(p.data.traducao);
+}
+const temGemeo = (p: (typeof posts)[number]) =>
+  !!p.data.traducao && chavesGemeas.has(p.data.traducao);
+---
+
+<Base
+  title={`${bloco.data.titulo} · zaraszine`}
+  description={bloco.data.resumo}
+  lang="pt"
+  outroHref={homeOf('pt')}
+  outroLabel={t.outroMundo}
+>
+  <section class="wrap cabeca">
+    <a class="volta" href={homeOf('pt')}>{t.volta}</a>
+    <p class="eyebrow">{t.bloco}</p>
+    <h1>{bloco.data.titulo}</h1>
+    <p class="resumo">{bloco.data.resumo}</p>
+    <p class="conta">{posts.length} {posts.length === 1 ? 'peça' : 'peças'} {t.nesteBloco}</p>
+  </section>
+
+  <section class="wrap">
+    <div class="grid">
+      {posts.map((post) => <PostCard post={post} temGemeo={temGemeo(post)} />)}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .cabeca { padding-top: 44px; padding-bottom: 8px; }
+  .volta {
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  h1 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    color: var(--tinta);
+    font-size: var(--t-2xl);
+    line-height: 1.06;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    margin: 12px 0 14px;
+    max-width: 20ch;
+  }
+  .resumo { font-style: italic; color: var(--meta); font-size: var(--t-md); margin: 0 0 12px; max-width: 60ch; }
+  .conta { font-family: var(--f-mono); font-size: var(--t-xs); letter-spacing: 0.08em; color: var(--meta); margin: 0 0 20px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px;
+  }
+</style>
