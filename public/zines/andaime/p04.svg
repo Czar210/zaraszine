@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" role="img" aria-label="Página 4">
-  <rect width="800" height="1100" fill="#1A100B"/>
-  <g transform="translate(400 550) rotate(14)"><rect x="-340" y="-240" width="680" height="480" fill="#E08D3C"/></g>
-  <circle cx="400" cy="550" r="120" fill="#FFB627"/>
-  <text x="120" y="960" font-family="Georgia,serif" font-size="86" fill="#FAD6A5" font-weight="bold">fim</text>
-  <text x="620" y="1030" font-family="monospace" font-size="90" fill="#FFB627">04</text>
-  <rect x="10" y="10" width="780" height="1080" fill="none" stroke="#241811" stroke-width="14"/>
-</svg>

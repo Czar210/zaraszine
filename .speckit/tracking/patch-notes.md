@@ -53,3 +53,15 @@ atualizado: 2026-07-06
 **Bug pego na verificação:** o fallback empilhado não sumia com JS. Causa clássica: o atributo HTML `hidden` perde pro `.empilhado { display: grid }` (o `[hidden]{display:none}` do user-agent tem especificidade menor). Corrigido com `.empilhado[hidden] { display: none; }` explícito.
 
 **Aprendizado transversal:** sempre que um elemento tem `display` próprio no CSS, o atributo `hidden` precisa de uma regra `[hidden]` própria pra vencer — senão fica "escondido" no DOM mas visível na tela.
+
+## Primeiro conteúdo real + limpeza dos andaimes (2026-07-08)
+
+**Publicado o primeiro post de verdade:** artigo [Cinco livros para me conhecer](/posts/cinco-livros-para-me-conhecer) — texto do César (5 resenhas), 5 capas reais em `/public/media/livros/`. Fluxo confirmado: César escreve, eu monto/meço, ele aprova, publica. Apliquei 14 correções de ortografia/gramática que ELE aprovou item a item (voz preservada; estilo — frases corridas, gírias — intocado).
+
+**Layout de imagem em artigo:** capa retrato a `width:100%` renderizava a ~1000px (gigante). Trocado por `max-width:min(100%,360px); height:auto; margin:auto` — capa modesta e centrada. (Cuidado: `width:auto`+`max-height` colapsa `<img>` em alguns engines; e `getBoundingClientRect` logo após reload/transição mente — medir com layout estável.)
+
+**Limpeza:** removidos os 4 posts-andaime + bloco-andaime + assets de exemplo (`public/zines/andaime/`, `figura-1/2.svg`). Sobraram o artigo real (publicado) e a zine Lorwyn (`rascunho: true`, aguardando arte real do César — não vai pro ar).
+
+**Cache do content layer:** apagar `.astro/` e `dist/` NÃO basta — o data-store persiste em `node_modules/.astro/data-store.json`. Enquanto não limpei ele, o build ressuscitava `/bloco/andaime` de um arquivo já deletado. Limpeza completa = `rm -rf .astro dist node_modules/.astro`.
+
+**Warnings conhecidos (benignos):** coleção `blocos` vazia gera `[glob-loader] No files found` + `collection "blocos" ... is empty`. Build sucede (exit 0), site correto. Somem quando existir o 1º bloco. Feature de blocos mantida (aprovada no M2); remover a UI de blocos até haver coletânea é opção aberta se o Diretor quiser log 100% limpo.

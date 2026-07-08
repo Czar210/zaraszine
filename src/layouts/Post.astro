@@ -192,13 +192,15 @@ const outroLabel = gemeo
   .prose :global(hr) { border: none; border-top: var(--borda); margin: 2.4em 0; }
   .prose :global(a) { color: var(--fogo); }
 
-  /* imagem = respiro limpo: largura da coluna, centrada, sem torto */
+  /* imagem = respiro limpo: centrada, largura modesta (capas retrato não
+     dominam a coluna), altura proporcional automática. */
   .prose :global(img) {
     display: block;
-    width: 100%;
+    max-width: min(100%, 360px);
+    height: auto;
+    margin: 2em auto;
     border: var(--borda);
     border-radius: var(--raio);
-    margin: 2em 0;
   }
 
   .gemeo { margin-top: 60px; }

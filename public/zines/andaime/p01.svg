@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" role="img" aria-label="Página 1">
-  <rect width="800" height="1100" fill="#241811"/>
-  <circle cx="400" cy="420" r="300" fill="#E08D3C"/>
-  <g transform="translate(400 560) rotate(-8)"><rect x="-320" y="-30" width="640" height="60" fill="#4A5D23"/></g>
-  <text x="60" y="200" font-family="Georgia,serif" font-size="120" fill="#FAD6A5" font-weight="bold">ZINE</text>
-  <text x="640" y="1030" font-family="monospace" font-size="90" fill="#FFB627">01</text>
-  <rect x="10" y="10" width="780" height="1080" fill="none" stroke="#1A100B" stroke-width="14"/>
-</svg>
